@@ -309,7 +309,90 @@
             self:Resize()
             return button
         end
-       
+
+        function window:AddSlider(text, config, callback)
+    self.count = self.count + 1
+    callback = callback or function() end
+    config = config or {min = 0, max = 100, precise = false}
+
+    local frame = library:Create("Frame", {
+        Size = UDim2.new(1, -10, 0, 40),
+        BackgroundTransparency = 1,
+        LayoutOrder = self.count,
+        Parent = self.container
+    })
+
+    local label = library:Create("TextLabel", {
+        Text = text,
+        Size = UDim2.new(1, -10, 0, 20),
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextSize = 14,
+        Font = Enum.Font.FredokaOne,
+        Parent = frame
+    })
+
+    local sliderFrame = library:Create("Frame", {
+        Size = UDim2.new(1, -10, 0, 10),
+        Position = UDim2.new(0, 5, 1, -15),
+        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+        BorderSizePixel = 0,
+        Parent = frame
+    })
+
+    local sliderBar = library:Create("Frame", {
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(0, 255, 140),
+        BorderSizePixel = 0,
+        Parent = sliderFrame
+    })
+
+    local valueLabel = library:Create("TextLabel", {
+        Text = tostring(config.min),
+        Size = UDim2.new(0, 30, 0, 20),
+        Position = UDim2.new(1, -35, 0, 0),
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 14,
+        Font = Enum.Font.FredokaOne,
+        Parent = frame
+    })
+
+    local dragging = false
+
+    local function updateSlider(input)
+        local scale = math.clamp((input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
+        local value = math.floor((config.min + (config.max - config.min) * scale) + 0.5)
+
+        sliderBar.Size = UDim2.new(scale, 0, 1, 0)
+        valueLabel.Text = tostring(value)
+        callback(value)
+    end
+
+    sliderFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            updateSlider(input)
+        end
+    end)
+
+    sliderFrame.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            updateSlider(input)
+        end
+    end)
+
+    self:Resize()
+    return sliderFrame
+end
+    
         function window:AddLabel(text)
             self.count = self.count + 1;
            
