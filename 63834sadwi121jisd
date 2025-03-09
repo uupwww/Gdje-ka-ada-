@@ -287,7 +287,37 @@
             self:Resize()
             return box
         end
-   
+
+        function window:AddCustomTextBox(placeholder, callback)
+    self.count = self.count + 1
+    callback = callback or function() end
+
+    local customBox = library:Create("TextBox", {
+        PlaceholderText = placeholder or "Masukkan teks...",
+        Size = UDim2.new(1, -10, 0, 20),
+        BackgroundTransparency = 0.75,
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextXAlignment = Enum.TextXAlignment.Center,
+        TextSize = 14,
+        Text = "",
+        Font = Enum.Font.FredokaOne,
+        LayoutOrder = self.count,
+        BorderSizePixel = 0,
+        Parent = self.container,
+    })
+
+    customBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            callback(customBox.Text)
+            print("User memasukkan teks:", customBox.Text)
+        end
+    end)
+
+    self:Resize()
+    return customBox
+end
+
         function window:AddButton(text, callback)
             self.count = self.count + 1
    
