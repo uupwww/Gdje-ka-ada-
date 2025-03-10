@@ -167,38 +167,36 @@
     });
 
     closeButton.MouseButton1Click:Connect(function()
-
-        if library.gui then
-            library.gui:Destroy()
-            library.gui = nil
+    for k, v in pairs(getfenv()) do
+        if type(v) == "function" then
+            getfenv()[k] = function() end
+        elseif type(v) == "boolean" then
+            getfenv()[k] = false
         end
-
-        for _, connection in pairs(getconnections(game:GetService("RunService").Heartbeat)) do
+    end
+    if _G.runningTasks then
+        for _, taskRef in pairs(_G.runningTasks) do
+            taskRef.stop = true
+        end
+    end
+    _G.runningTasks = {}
+    for _, connection in pairs(getconnections(game:GetService("RunService").Heartbeat)) do
+        if connection.Function and islclosure(connection.Function) then
             connection:Disconnect()
         end
-        for _, event in pairs(getconnections(game:GetService("UserInputService").InputBegan)) do
-            event:Disconnect()
+    end
+    for _, connection in pairs(getconnections(game:GetService("UserInputService").InputBegan)) do
+        if connection.Function and islclosure(connection.Function) then
+            connection:Disconnect()
         end
-    end)
-   
-        self:Create("TextLabel", {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1;
-            BorderSizePixel = 0;
-            TextColor3 = options.txtcolor,
-            TextColor3 = (options.bartextcolor or Color3.fromRGB(255, 255, 255));
-            TextSize = 17,
-            Font = Enum.Font.FredokaOne;
-            Text = options.text or "window",
-            Name = "Window",
-            Parent = window.frame,
-        })
-   
-        do
-            dragger.new(window.frame)
-            resizer.new(window.background, window.container);
-        end
-   
+    end
+    if library and library.gui then
+        task.wait(0.1)
+        library.gui:Destroy()
+        library.gui = nil
+    end
+end)
+
         local function getSize()
             local ySize = 0;
             for i, object in next, window.container:GetChildren() do
