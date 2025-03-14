@@ -181,30 +181,24 @@
 
         function tab:Show()
           for _, otherTab in pairs(window.tabs) do
-            otherTab.content.Visible = false
+              otherTab.content.Visible = false
+              for _, element in pairs(otherTab.content:GetChildren()) do
+                  element.Visible = false
+              end
           end
           tab.content.Visible = true
           window.currentTab = tab
-        end
 
-        tab.button.MouseButton1Click:Connect(function()
-            tab:Show()
-        end)
+          for _, element in pairs(tab.content:GetChildren()) do
+              element.Visible = true
+          end
+       end
 
-        self.tabs[tabName] = tab
-
-        if not self.currentTab then
-            tab:Show()
-        end
-
-        return tab
-    end
-
-    function window:AddElementToTab(tabName, element)
-        if self.tabs[tabName] then
-            element.Parent = self.tabs[tabName].content
-        end
-    end
+       function window:AddElementToTab(tabName, element)
+           if self.tabs[tabName] then
+               element.Parent = self.tabs[tabName].content
+           end
+       end
        
         window.organizer = self:Create('UIListLayout', {
             Name = 'Sorter';
