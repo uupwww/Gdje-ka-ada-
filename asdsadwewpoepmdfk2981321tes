@@ -120,6 +120,91 @@
             Size = UDim2.new(1, 0, 0, 25),
             ClipsDescendants = true;
         })
+
+        -- Tab System
+    window.tabs = {}
+    window.currentTab = nil
+
+    -- Container untuk Tab Buttons
+    window.tabContainer = self:Create("Frame", {
+        Name = 'TabContainer';
+        Parent = window.frame,
+        BorderSizePixel = 0;
+        BackgroundTransparency = 1;
+        Size = UDim2.new(1, 0, 0, 25),
+        Position = UDim2.new(0, 0, 1, 0),
+    })
+
+    window.tabLayout = self:Create("UIListLayout", {
+        Name = "TabLayout",
+        FillDirection = Enum.FillDirection.Horizontal,
+        HorizontalAlignment = Enum.HorizontalAlignment.Center,
+        Parent = window.tabContainer
+    })
+
+    window.contentContainer = self:Create('Frame', {
+        Name = 'ContentContainer';
+        Parent = window.frame,
+        BorderSizePixel = 0;
+        BackgroundColor3 = options.bgcolor,
+        Position = UDim2.new(0, 0, 1, 25),
+        Size = UDim2.new(1, 0, 0, 125),
+        ClipsDescendants = true;
+    })
+
+    function window:AddTab(tabName)
+        if self.tabs[tabName] then
+            return self.tabs[tabName]
+        end
+
+        local tab = {}
+        tab.button = library:Create("TextButton", {
+            Name = tabName,
+            Parent = self.tabContainer,
+            BackgroundTransparency = 0.2,
+            Size = UDim2.new(0, 70, 1, 0),
+            Text = tabName,
+            TextSize = 14,
+            Font = Enum.Font.FredokaOne,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+        })
+
+        tab.content = library:Create("Frame", {
+            Name = tabName .. "Content",
+            Parent = self.contentContainer,
+            BorderSizePixel = 0,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            Visible = false,
+        })
+
+        function tab:Show()
+            for _, otherTab in pairs(window.tabs) do
+                otherTab.content.Visible = false
+            end
+
+            tab.content.Visible = true
+            window.currentTab = tab
+        end
+
+        tab.button.MouseButton1Click:Connect(function()
+            tab:Show()
+        end)
+
+        self.tabs[tabName] = tab
+
+        if not self.currentTab then
+            tab:Show()
+        end
+
+        return tab
+    end
+
+    function window:AddElementToTab(tabName, element)
+        if self.tabs[tabName] then
+            element.Parent = self.tabs[tabName].content
+        end
+    end
        
         window.organizer = self:Create('UIListLayout', {
             Name = 'Sorter';
