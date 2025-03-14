@@ -136,10 +136,11 @@
     })
 
     window.tabLayout = self:Create("UIListLayout", {
-        Name = "TabLayout",
-        FillDirection = Enum.FillDirection.Horizontal,
-        HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        Parent = window.tabContainer
+    Name = "TabLayout",
+    FillDirection = Enum.FillDirection.Horizontal,
+    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+    Padding = UDim.new(0, 5), -- Tambahkan jarak antar tab
+    Parent = window.tabContainer
     })
 
     window.contentContainer = self:Create('Frame', {
@@ -179,13 +180,16 @@
         })
 
         function tab:Show()
-            for _, otherTab in pairs(window.tabs) do
-                otherTab.content.Visible = false
-            end
+        -- Sembunyikan semua Tab lain
+          for _, otherTab in pairs(window.tabs) do
+            otherTab.content.Visible = false
+          end
 
-            tab.content.Visible = true
-            window.currentTab = tab
+        -- Tampilkan tab yang dipilih
+          tab.content.Visible = true
+          window.currentTab = tab
         end
+
 
         tab.button.MouseButton1Click:Connect(function()
             tab:Show()
