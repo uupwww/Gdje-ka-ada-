@@ -197,9 +197,10 @@
        function window:AddElementToTab(tabName, element)
            if self.tabs[tabName] then
                element.Parent = self.tabs[tabName].content
+               element.Visible = (self.currentTab == self.tabs[tabName])
            end
        end
-       
+
         window.organizer = self:Create('UIListLayout', {
             Name = 'Sorter';
             --Padding = UDim.new(0, 0);
