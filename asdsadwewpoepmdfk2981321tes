@@ -180,16 +180,12 @@
         })
 
         function tab:Show()
-        -- Sembunyikan semua Tab lain
           for _, otherTab in pairs(window.tabs) do
             otherTab.content.Visible = false
           end
-
-        -- Tampilkan tab yang dipilih
           tab.content.Visible = true
           window.currentTab = tab
         end
-
 
         tab.button.MouseButton1Click:Connect(function()
             tab:Show()
