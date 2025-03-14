@@ -120,12 +120,10 @@
             Size = UDim2.new(1, 0, 0, 25),
             ClipsDescendants = true;
         })
-
-        -- Tab System
+        
         window.tabs = {}
         window.currentTab = nil
-
-        -- Container untuk Tab Buttons
+        
         window.tabContainer = self:Create("Frame", {
             Name = 'TabContainer';
             Parent = window.frame,
@@ -139,7 +137,7 @@
             Name = "TabLayout",
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            Padding = UDim.new(0, 5), -- Tambahkan jarak antar tab
+            Padding = UDim.new(0, 5),
             Parent = window.tabContainer
         })
 
@@ -153,7 +151,7 @@
             ClipsDescendants = true;
         })
 
-        function window:AddTab(tabName) 
+        function window:AddTab(tabName)
             if self.tabs[tabName] then
         return self.tabs[tabName]
         end
@@ -181,15 +179,13 @@
         })
 
         function tab:Show()
-        -- Sembunyikan semua tab lain
             for _, otherTab in pairs(window.tabs) do
                 otherTab.content.Visible = false
              for _, element in pairs(otherTab.content:GetChildren()) do
                  element.Visible = false
              end
         end
-
-        -- Tampilkan tab yang dipilih
+            
             tab.content.Visible = true
             window.currentTab = tab
 
@@ -197,15 +193,13 @@
                  element.Visible = true
                 end
             end
-
-    -- Ketika tombol tab ditekan, tampilkan tab yang sesuai
+            
             tab.button.MouseButton1Click:Connect(function()
                 tab:Show()
             end)
 
             self.tabs[tabName] = tab
-
-    -- Jika ini adalah tab pertama, jadikan aktif secara default
+            
             if not self.currentTab then
             tab:Show()
          end
@@ -214,13 +208,14 @@
         end
 
         function window:AddElementToTab(tabName, element)
-            if self.tabs[tabName] then
-                element.Parent = self.tabs[tabName].content 
-                element.Visible = (self.currentTab == self.tabs[tabName])
-            end
-        end
+    if not self.tabs[tabName] then
+        return
+    end
 
+    element.Parent = self.tabs[tabName].content
+    element.Visible = (self.currentTab == self.tabs[tabName])
 
+end
             window.organizer = self:Create('UIListLayout', {
                 Name = 'Sorter';
                 --Padding = UDim.new(0, 0);
