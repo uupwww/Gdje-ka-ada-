@@ -1,10 +1,10 @@
  local library = {
         windowcount = 0;
     }
-   
+
     local dragger = {};
     local resizer = {};
-   
+
     do
         local mouse = game:GetService("Players").LocalPlayer:GetMouse();
         local inputService = game:GetService('UserInputService');
@@ -13,10 +13,10 @@
             local s, event = pcall(function()
                 return frame.MouseEnter
             end)
-   
+
             if s then
                 frame.Active = true;
-   
+
                 event:connect(function()
                     local input = frame.InputBegan:connect(function(key)
                         if key.UserInputType == Enum.UserInputType.MouseButton1 or key.UserInputType == Enum.UserInputType.Touch then
@@ -26,7 +26,7 @@
                             end
                         end
                     end)
-   
+
                     local leave;
                     leave = frame.MouseLeave:connect(function()
                         input:disconnect();
@@ -35,35 +35,35 @@
                 end)
             end
         end
-       
+
         function resizer.new(p, s)
             p:GetPropertyChangedSignal('AbsoluteSize'):connect(function()
                 s.Size = UDim2.new(s.Size.X.Scale, s.Size.X.Offset, s.Size.Y.Scale, p.AbsoluteSize.Y);
             end)
         end
     end
-   
-   
+
+
     local defaults = {
         txtcolor = Color3.fromRGB(255, 255, 255),
         underline = Color3.fromRGB(0, 255, 140),
         barcolor = Color3.fromRGB(40, 40, 40),
         bgcolor = Color3.fromRGB(30, 30, 30),
     }
-   
+
     function library:Create(class, props)
         local object = Instance.new(class);
-   
+
         for i, prop in next, props do
             if i ~= "Parent" then
                 object[i] = prop;
             end
         end
-   
+
         object.Parent = props.Parent;
         return object;
     end
-   
+
     function library:CreateWindow(options)
         assert(options.text, "no name");
         local window = {
@@ -153,53 +153,73 @@
             ClipsDescendants = true;
         })
 
-        function window:AddTab(tabName)
+        function window:AddTab(tabName) 
             if self.tabs[tabName] then
-                return self.tabs[tabName]
-            end
+        return self.tabs[tabName]
+        end
 
-            local tab = {}
-            tab.button = library:Create("TextButton", {
-                Name = tabName,
-                Parent = self.tabContainer,
-                BackgroundTransparency = 0.2,
-                Size = UDim2.new(0, 70, 1, 0),
-                Text = tabName,
-                TextSize = 14,
-                Font = Enum.Font.FredokaOne,
-                TextColor3 = Color3.fromRGB(255, 255, 255),
-            })
+        local tab = {}
+        tab.name = tabName
+        tab.button = library:Create("TextButton", {
+            Name = tabName,
+            Parent = self.tabContainer,
+            BackgroundTransparency = 0.2,
+            Size = UDim2.new(0, 70, 1, 0),
+            Text = tabName,
+            TextSize = 14,
+            Font = Enum.Font.FredokaOne,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+        })
 
-            tab.content = library:Create("Frame", {
-                Name = tabName .. "Content",
-                Parent = self.contentContainer,
-                BorderSizePixel = 0,
-                BackgroundTransparency = 1,
-                Size = UDim2.new(1, 0, 1, 0),
-                Visible = false,
-            })
+        tab.content = library:Create("Frame", {
+            Name = tabName .. "Content",
+            Parent = self.contentContainer,
+            BorderSizePixel = 0,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            Visible = false,
+        })
 
-            function tab:Show()
-                for _, otherTab in pairs(window.tabs) do
-                    otherTab.content.Visible = false
-                    for _, element in pairs(otherTab.content:GetChildren()) do
-                        element.Visible = false
-                    end
-                end
-                tab.content.Visible = true
-                window.currentTab = tab
+        function tab:Show()
+        -- Sembunyikan semua tab lain
+            for _, otherTab in pairs(window.tabs) do
+                otherTab.content.Visible = false
+             for _, element in pairs(otherTab.content:GetChildren()) do
+                 element.Visible = false
+             end
+        end
 
-                for _, element in pairs(tab.content:GetChildren()) do
-                    element.Visible = true
-                end
-            end
+        -- Tampilkan tab yang dipilih
+            tab.content.Visible = true
+            window.currentTab = tab
 
-            function window:AddElementToTab(tabName, element)
-                if self.tabs[tabName] then
-                    element.Parent = self.tabs[tabName].content
-                    element.Visible = (self.currentTab == self.tabs[tabName])
+            for    _, element in pairs(tab.content:GetChildren()) do
+                 element.Visible = true
                 end
             end
+
+    -- Ketika tombol tab ditekan, tampilkan tab yang sesuai
+            tab.button.MouseButton1Click:Connect(function()
+                tab:Show()
+            end)
+
+            self.tabs[tabName] = tab
+
+    -- Jika ini adalah tab pertama, jadikan aktif secara default
+            if not self.currentTab then
+            tab:Show()
+         end
+
+            return tab
+        end
+
+        function window:AddElementToTab(tabName, element)
+            if self.tabs[tabName] then
+                element.Parent = self.tabs[tabName].content 
+                element.Visible = (self.currentTab == self.tabs[tabName])
+            end
+        end
+
 
             window.organizer = self:Create('UIListLayout', {
                 Name = 'Sorter';
@@ -617,5 +637,5 @@
 
             return window
         end
-        
-    end return library
+
+ return library
