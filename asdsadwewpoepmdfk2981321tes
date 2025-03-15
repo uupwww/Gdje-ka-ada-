@@ -47,8 +47,8 @@
     local defaults = {
         txtcolor = Color3.fromRGB(255, 255, 255),
         underline = Color3.fromRGB(255, 0, 255),
-        barcolor = Color3.fromRGB(40, 40, 40),
-        bgcolor = Color3.fromRGB(0, 0, 51),
+        barcolor = Color3.fromRGB(0, 0, 0),
+        bgcolor = Color3.fromRGB(0, 0, 0),
     }
    
     function library:Create(class, props)
