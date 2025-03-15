@@ -156,6 +156,19 @@
             Parent = window.frame,
         });
 
+        local minimized = false
+        togglebutton.MouseButton1Click:Connect(function()
+            minimized = not minimized
+            togglebutton.Text = minimized and "+" or "-"
+            if minimized then
+                window.container.Visible = false
+                window.background.Visible = false
+            else
+                window.container.Visible = true
+                window.background.Visible = true
+            end
+        end)
+
         self:Create("TextLabel", {
             Size = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 1;
