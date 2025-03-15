@@ -207,7 +207,67 @@
                 self.background.Size = size
             end
         end
-   
+
+        function window:AddTab(tabName)
+            if not self.tabs then
+                self.tabs = {}
+                self.tabButtons = {}
+                self.currentTab = nil
+        
+                self.tabBar = library:Create("Frame", {
+                    Parent = self.frame,
+                    Size = UDim2.new(1, 0, 0, 25),
+                    Position = UDim2.new(0, 0, 1, 0),
+                    BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+                    BorderSizePixel = 0
+                })
+        
+                library:Create("UIListLayout", {
+                    Parent = self.tabBar,
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                    Padding = UDim.new(0, 5)
+                })
+            end
+        
+            local tabFrame = library:Create("Frame", {
+                Parent = self.frame,
+                Size = UDim2.new(1, 0, 1, -30),
+                Position = UDim2.new(0, 0, 0, 30),
+                BackgroundTransparency = 1,
+                Visible = false
+            })
+        
+            local tabButton = library:Create("TextButton", {
+                Parent = self.tabBar,
+                Text = tabName,
+                Size = UDim2.new(0, 60, 1, 0),
+                BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Font = Enum.Font.FredokaOne,
+                TextSize = 14
+            })
+        
+            tabButton.MouseButton1Click:Connect(function()
+                for _, frame in pairs(self.tabs) do
+                    frame.Visible = false
+                end
+                tabFrame.Visible = true
+                self.currentTab = tabFrame
+            end)
+        
+            self.tabs[tabName] = tabFrame
+            self.tabButtons[tabName] = tabButton
+        
+            -- Jika ini tab pertama, aktifkan langsung
+            if not self.currentTab then
+                tabFrame.Visible = true
+                self.currentTab = tabFrame
+            end
+        
+            return tabFrame
+        end
+
         function window:AddToggle(text, callback)
             self.count = self.count + 1
    
