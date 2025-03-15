@@ -213,15 +213,15 @@
                 self.tabs = {}
                 self.tabButtons = {}
                 self.currentTab = nil
- 
+
                 self.tabBar = library:Create("Frame", {
                     Parent = self.frame,
                     Size = UDim2.new(1, 0, 0, 25),
-                    Position = UDim2.new(0, 0, -1, 30), -- Pastikan tab berada di posisi yang sesuai
+                    Position = UDim2.new(0, 0, 0, 30), -- Pastikan tab berada DI BAWAH judul window
                     BackgroundColor3 = Color3.fromRGB(40, 40, 40),
                     BorderSizePixel = 0
                 })
-        
+
                 library:Create("UIListLayout", {
                     Parent = self.tabBar,
                     FillDirection = Enum.FillDirection.Horizontal,
