@@ -123,7 +123,7 @@
        
         window.organizer = self:Create('UIListLayout', {
             Name = 'Sorter';
-            Padding = UDim.new(0, 3);
+            Padding = UDim.new(0, 1);
             SortOrder = Enum.SortOrder.LayoutOrder;
             Parent = window.container;
         })
