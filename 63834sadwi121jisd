@@ -84,11 +84,23 @@
             Active = true,
             BackgroundTransparency = 0,
             Size = UDim2.new(0, 220, 0, 30),
-            Position = UDim2.new(0, (15 + ((200 * self.windowcount) - 200)), 0, 15),
+            Position = UDim2.new(0, (15 + ((250 * self.windowcount) - 250)), 0, 15),
             BackgroundColor3 = options.barcolor,
             BorderSizePixel = 0;
         })
-   
+
+        local UserInputService = game:GetService("UserInputService")
+        local guiVisible = true -- Status awal GUI terlihat
+
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+
+            if input.KeyCode == Enum.KeyCode.K then
+                guiVisible = not guiVisible
+                library.gui.Enabled = guiVisible
+            end
+        end)
+
         window.background = self:Create('Frame', {
             Name = 'Background';
             Parent = window.frame,
@@ -108,100 +120,6 @@
             Size = UDim2.new(1, 0, 0, 25),
             ClipsDescendants = true;
         })
-
-        -- Tab System
-    window.tabs = {}
-    window.currentTab = nil
-
-    -- Container untuk Tab Buttons
-    window.tabContainer = self:Create("Frame", {
-        Name = 'TabContainer';
-        Parent = window.frame,
-        BorderSizePixel = 0;
-        BackgroundTransparency = 1;
-        Size = UDim2.new(1, 0, 0, 25),
-        Position = UDim2.new(0, 0, 1, 0),
-    })
-
-    window.tabLayout = self:Create("UIListLayout", {
-        Name = "TabLayout",
-        FillDirection = Enum.FillDirection.Horizontal,
-        HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        Parent = window.tabContainer
-    })
-
-    window.contentContainer = self:Create('Frame', {
-        Name = 'ContentContainer';
-        Parent = window.frame,
-        BorderSizePixel = 0;
-        BackgroundColor3 = options.bgcolor,
-        Position = UDim2.new(0, 0, 1, 25),
-        Size = UDim2.new(1, 0, 0, 125),
-        ClipsDescendants = true;
-    })
-
-    -- Fungsi untuk Menambahkan Tab
-    function window:AddTab(tabName)
-        if self.tabs[tabName] then
-            return self.tabs[tabName]
-        end
-
-        local tab = {}
-
-        -- Buat tombol tab
-        tab.button = library:Create("TextButton", {
-            Name = tabName,
-            Parent = self.tabContainer,
-            BackgroundTransparency = 0.2,
-            Size = UDim2.new(0, 70, 1, 0),
-            Text = tabName,
-            TextSize = 14,
-            Font = Enum.Font.FredokaOne,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-        })
-
-        -- Buat konten untuk Tab ini
-        tab.content = library:Create("Frame", {
-            Name = tabName .. "Content",
-            Parent = self.contentContainer,
-            BorderSizePixel = 0,
-            BackgroundTransparency = 1,
-            Size = UDim2.new(1, 0, 1, 0),
-            Visible = false, -- Tab lain disembunyikan dulu
-        })
-
-        function tab:Show()
-            -- Sembunyikan semua Tab lain
-            for _, otherTab in pairs(window.tabs) do
-                otherTab.content.Visible = false
-            end
-
-            -- Tampilkan tab yang dipilih
-            tab.content.Visible = true
-            window.currentTab = tab
-        end
-
-        tab.button.MouseButton1Click:Connect(function()
-            tab:Show()
-        end)
-
-        -- Simpan Tab dalam daftar
-        self.tabs[tabName] = tab
-
-        -- Jika ini adalah Tab pertama, langsung aktifkan
-        if not self.currentTab then
-            tab:Show()
-        end
-
-        return tab
-    end
-
-    -- Fungsi untuk Menambah Elemen ke Tab
-    function window:AddElementToTab(tabName, element)
-        if self.tabs[tabName] then
-            element.Parent = self.tabs[tabName].content
-        end
-    end
        
         window.organizer = self:Create('UIListLayout', {
             Name = 'Sorter';
@@ -237,44 +155,20 @@
             Font = Enum.Font.FredokaOne;
             Parent = window.frame,
         });
-        togglebutton.MouseButton1Click:connect(function()
-            window.closed = not window.closed
-            togglebutton.Text = (window.closed and "+" or "-")
-            if window.closed then
-                window:Resize(true, UDim2.new(1, 0, 0, 0))
+
+        local minimized = false
+        togglebutton.MouseButton1Click:Connect(function()
+            minimized = not minimized
+            togglebutton.Text = minimized and "+" or "-"
+            if minimized then
+                window.container.Visible = false
+                window.background.Visible = false
             else
-                window:Resize(true)
+                window.container.Visible = true
+                window.background.Visible = true
             end
         end)
 
-         local closeButton = library:Create("TextButton", {
-        Name = "Close",
-        ZIndex = 2,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(1, -50, 0, 0),
-        Size = UDim2.new(0, 25, 1, 0),
-        Text = "X",
-        TextSize = 17,
-        TextColor3 = Color3.fromRGB(255, 25, 25),
-        Font = Enum.Font.FredokaOne,
-        Parent = window.frame,
-    });
-
-    closeButton.MouseButton1Click:Connect(function()
-
-        if library.gui then
-            library.gui:Destroy()
-            library.gui = nil
-        end
-
-        for _, connection in pairs(getconnections(game:GetService("RunService").Heartbeat)) do
-            connection:Disconnect()
-        end
-        for _, event in pairs(getconnections(game:GetService("UserInputService").InputBegan)) do
-            event:Disconnect()
-        end
-    end)
-   
         self:Create("TextLabel", {
             Size = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 1;
