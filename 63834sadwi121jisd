@@ -217,7 +217,7 @@
                 self.tabBar = library:Create("Frame", {
                     Parent = self.frame,
                     Size = UDim2.new(1, 0, 0, 25),
-                    Position = UDim2.new(0, 0, 0, 30), -- Pastikan tab berada DI BAWAH judul window
+                    Position = UDim2.new(0, 0, 0, 35), -- Geser ke bawah agar di bawah garis hijau
                     BackgroundColor3 = Color3.fromRGB(40, 40, 40),
                     BorderSizePixel = 0
                 })
@@ -241,7 +241,7 @@
             local tabButton = library:Create("TextButton", {
                 Parent = self.tabBar,
                 Text = tabName,
-                Size = UDim2.new(0, 60, 1, 0),
+                Size = UDim2.new(0, 70, 1, 0), -- Ubah ukuran agar tidak terlalu lebar
                 BackgroundColor3 = Color3.fromRGB(30, 30, 30),
                 TextColor3 = Color3.fromRGB(255, 255, 255),
                 Font = Enum.Font.FredokaOne,
